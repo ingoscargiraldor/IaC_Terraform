@@ -5,7 +5,8 @@ on:
     types: [submitted]
 
 env:
-  TF_SA: github-deployments@sam-gallagher-tutorials-001.iam.gserviceaccount.com
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TERRAFORM_VERSION: "1.2.9"
   TF_IN_AUTOMATION: "True"
 
@@ -18,19 +19,27 @@ jobs:
 
       - name: Get PR ID
         id: pr-id
-        shell: bash
-        env:
-          GITHUB_REF: ${{ inputs.github_ref }}
         run: |
-          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        id: init
+        run: |
+          terraform init
+
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
+          path: tfplan
 
       - name: Terraform Apply
-        uses: ./.github/apply
-        with:
-          terraform_sa: ${{ env.TF_SA }}
-          terraform_directory: "terraform"
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-          google_sa_key: ${{ secrets.GOOGLE_CREDENTIALS }}
-          github_token: ${{ secrets.GH_TOKEN }}
-          pr_id: ${{ steps.pr-id.outputs.PR_NUMBER }}
+        id: apply
+        run: |
+          terraform apply -no-color tfplan

@@ -4,18 +4,14 @@ inputs:
   terraform_directory:
     description: 'Directory that holds Terraform code'
     required: true
-  terraform_sa: 
-    description: 'GCP service account used for Terraform actions'
-    required: true
-  terraform_version: 
-    description: 'Terraform Version'
-    required: true
-    default: 1.2.9
   github_token: 
     description: 'GitHub token for auth'
     required: true
-  google_sa_key:
-    description: 'JSON key for GCP service account'
+  aws_access_key_id:
+    description: 'AWS access key ID'
+    required: true
+  aws_secret_access_key:
+    description: 'AWS secret access key'
     required: true
   pr_id:
     description: 'Pull request ID'
@@ -27,24 +23,16 @@ runs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
-        terraform_version: ${{ inputs.terraforom_version }}
+        terraform_version: ${{ inputs.terraform_version }}
         terraform_wrapper: false
-
-    - id: 'auth'
-      name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        service_account: ${{ inputs.terraform_sa }}
-        credentials_json: ${{ inputs.google_sa_key }}
-
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v0.6.0'
 
     - name: Terraform Init
       id: init
       working-directory: ${{ inputs.terraform_directory }}
       shell: bash
       run: |
+        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
         terraform init
 
     - name: Terraform Plan
