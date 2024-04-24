@@ -31,11 +31,13 @@ jobs:
 
       - name: Terraform Init
         id: init
+        working-directory: terraform/
         run: |
           terraform init
 
       - name: Terraform Plan
         id: plan
+        working-directory: terraform/
         run: |
           terraform plan -no-color -out=tfplan
 
