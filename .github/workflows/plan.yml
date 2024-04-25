@@ -41,7 +41,9 @@ jobs:
         id: plan
         working-directory: terraform/
         run: |
-          terraform plan -no-color -out=tfplan
+          touch tfplan.txt
+          terraform plan -lock=false -input=false -out=tfplan.txt
+          readlink -f tfplan.txt
       
       - name: List output files
         working-directory: terraform/
@@ -51,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
-          path: terraform/${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
+          path: terraform/tfplan.txt
 
       - name: Simulate creating tfplan
         run: echo "dummy data" > terraform/dummydata.txt
