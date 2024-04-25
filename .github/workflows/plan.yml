@@ -57,5 +57,9 @@ jobs:
         working-directory: terraform/
         run: find *-tfplan
 
+      - name: List output files 2
+        working-directory: terraform/
+        run: ls -la
+
       - name: List files in terraform directory
         run: ls -la terraform/
