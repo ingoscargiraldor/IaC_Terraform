@@ -48,19 +48,19 @@ jobs:
         run: ls -la
 
       - name: Save Plan Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
           path: terraform/
 
       - name: Simulate creating tfplan
-        run: echo "dummy data" > dummydata
+        run: echo "dummy data" > dummydata.txt
 
       - name: Upload tfplan as an artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dummydata
-          path: terraform/
+          path: terraform/dummydata.txt
 
       - name: List output files 2
         working-directory: terraform/
