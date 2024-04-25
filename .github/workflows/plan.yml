@@ -69,8 +69,8 @@ jobs:
         run: ls -la
 
       - name: cat tfplan
-        working-directory: terraform/
-        run: cat tfplan.txt
+        working-directory: /
+        run: ls -la
 
       - name: List files in terraform directory
         run: ls -la terraform/
