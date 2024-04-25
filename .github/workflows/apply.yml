@@ -35,7 +35,7 @@ jobs:
           export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
           terraform init
-          
+
       - name: List files in terraform directory
         run: ls -la terraform/
 
@@ -43,10 +43,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
-          path: terraform/
+          path: terraform/tfplan.txt
 
       - name: Terraform Apply
         id: apply
         working-directory: terraform/
         run: |
-          terraform apply -no-color tfplan
+          terraform apply -no-color tfplan.txt
