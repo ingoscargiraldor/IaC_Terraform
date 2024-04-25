@@ -53,13 +53,13 @@ jobs:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
           path: terraform/tfplan
 
-      - name: Find output files
-        working-directory: terraform/
-        run: find *-tfplan
-
       - name: List output files 2
         working-directory: terraform/
         run: ls -la
+  
+      - name: Find output files
+        working-directory: terraform/
+        run: find *-tfplan
 
       - name: List files in terraform directory
         run: ls -la terraform/
