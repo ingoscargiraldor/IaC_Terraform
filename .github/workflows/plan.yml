@@ -51,12 +51,16 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
-          path: terraform/tfplan
+          path: terraform/
 
       - name: List output files 2
-        working-directory: terraform/tfplan
+        working-directory: terraform/
         run: ls -la
-  
+
+      - name: cat tfplan
+        working-directory: terraform/
+        run: cat tfplan
+
       - name: Find output files
         working-directory: terraform/
         run: find 4-tf-plan
