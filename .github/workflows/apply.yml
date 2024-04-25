@@ -38,6 +38,7 @@ jobs:
 
       - name: Download Plan Artifact
         uses: actions/download-artifact@v3
+        working-directory: terraform/
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
           path: tfplan
