@@ -52,3 +52,6 @@ jobs:
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
           path: terraform/
+
+      - name: List files in terraform directory
+        run: ls -la terraform/
