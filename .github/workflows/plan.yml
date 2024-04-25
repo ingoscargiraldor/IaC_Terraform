@@ -46,9 +46,9 @@ jobs:
       - name: List output files
         working-directory: terraform/
         run: ls -la
-        
+
       - name: Save Plan Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
-          path: tfplan
+          path: terraform/
