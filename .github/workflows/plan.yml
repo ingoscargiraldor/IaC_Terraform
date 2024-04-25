@@ -41,7 +41,7 @@ jobs:
         id: plan
         working-directory: terraform/
         run: |
-          terraform plan -no-color -out=terraform/tfplan
+          terraform plan -no-color -out=tfplan
       
       - name: List output files
         working-directory: terraform/
