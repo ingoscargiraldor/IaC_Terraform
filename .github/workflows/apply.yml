@@ -60,6 +60,6 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        working-directory: /opt/plantoexec/
+        working-directory: terraform/
         run: |
           terraform apply -no-color tfplan
