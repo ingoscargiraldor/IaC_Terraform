@@ -59,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
-          path: /opt/plantoexec/tfplan.txt
+          path: /opt/plantoexec/tfplan
 
       - name: Simulate creating tfplan
         run: echo "dummy data" > /opt/plantoexec/dummydata.txt
