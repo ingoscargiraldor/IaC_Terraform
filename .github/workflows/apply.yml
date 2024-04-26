@@ -39,14 +39,22 @@ jobs:
       - name: List files in terraform directory
         run: ls -la terraform/
 
+      - name: List files in opt directory
+        run: ls -la /opt/plantoexec/
+
       - name: Download Plan Artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
-          path: terraform/tfplan.txt
+          path: /opt/plantoexec/tfplan
+
+      - name: List files in opt directory
+        run: |
+          ls -la /opt/plantoexec/
+          cp -r terraform/ /opt/plantoexec/
 
       - name: Terraform Apply
         id: apply
-        working-directory: terraform/
+        working-directory: /opt/plantoexec/
         run: |
-          terraform apply -no-color tfplan.txt
+          terraform apply -no-color tfplan
