@@ -55,7 +55,6 @@ jobs:
         run: |
           touch tfplan
           terraform plan -lock=false -input=false -out=tfplan
-          cp tfplan /opt/plantoexec/
           readlink -f tfplan
 
       - name: Terraform Apply
