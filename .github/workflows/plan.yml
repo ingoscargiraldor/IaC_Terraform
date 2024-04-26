@@ -43,6 +43,7 @@ jobs:
         working-directory: /opt/plantoexec/
         run: |
           touch tfplan
+          cp terraform/ /opt/plantoexec/
           terraform plan -lock=false -input=false -out=tfplan
           readlink -f tfplan
       
