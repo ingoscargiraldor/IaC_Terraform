@@ -1,5 +1,4 @@
 name: Terraform Apply
-##branch IaC
 
 on:
   push:
