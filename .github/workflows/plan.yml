@@ -35,20 +35,44 @@ jobs:
         run: |
           export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
+          mkdir -p /opt/plantoexec
           terraform init
 
       - name: Terraform Plan
         id: plan
         working-directory: terraform/
         run: |
-          terraform plan -no-color -out=tfplan
+          touch tfplan
+          terraform plan -lock=false -input=false -out=tfplan
+          cp tfplan /opt/plantoexec/
+          readlink -f tfplan
       
       - name: List output files
         working-directory: terraform/
         run: ls -la
 
+      - name: List output files
+        working-directory: /opt/plantoexec/
+        run: ls -la
+
       - name: Save Plan Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
-          path: terraform/
+          path: /opt/plantoexec/tfplan
+
+      - name: Simulate creating tfplan
+        run: echo "dummy data" > /opt/plantoexec/dummydata.txt
+
+      - name: Upload tfplan as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dummydata
+          path: /opt/plantoexec/dummydata.txt
+
+      - name: List output files 2
+        working-directory: /opt/plantoexec/
+        run: ls -la
+
+      - name: List files in terraform directory
+        run: ls -la terraform/

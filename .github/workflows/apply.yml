@@ -37,11 +37,26 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
           terraform init
 
-      - name: Download Plan Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
-          path: terraform/
+      - name: List files in terraform directory
+        run: ls -la terraform/
+
+#      - name: List files in opt directory
+#        run: ls -la /opt/plantoexec/
+
+#      - name: Download Plan Artifact
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
+#          path: /opt/plantoexec/tfplan
+
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: terraform/
+        run: |
+          touch tfplan
+          terraform plan -lock=false -input=false -out=tfplan
+          readlink -f tfplan
 
       - name: Terraform Apply
         id: apply
