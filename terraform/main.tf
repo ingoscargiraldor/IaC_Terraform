@@ -3,5 +3,9 @@ resource "aws_s3_bucket" "bucket" {
 }
 
 resource "aws_s3_bucket" "bucket1" {
-  bucket = "test-bucket-01234599-githubprobe-3"
+  bucket = "test-bucket-01234599-githubprobe-1"
+}
+
+resource "aws_s3_bucket" "bucket2" {
+  bucket = "test-bucket-01234599-githubprobe-4"
 }
