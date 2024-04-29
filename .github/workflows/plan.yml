@@ -23,6 +23,19 @@ jobs:
           PR_NUMBER=${{ github.event.number }}
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
 
+      - name: Detect changed folder
+        id: detect-folder
+        run: |
+          # Extraer los nombres de carpetas del último commit
+          FOLDER_NAME=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep '/' | awk -F'/' '{print $1}' | uniq)
+          echo "Folder name: $FOLDER_NAME"
+          echo "FOLDER_NAME=$FOLDER_NAME" >> $GITHUB_ENV
+  
+      - name: Use the folder name
+        run: |
+          echo "Changes detected in folder: $FOLDER_NAME"
+          # Aquí puedes ejecutar comandos o scripts dependiendo de la carpeta
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
