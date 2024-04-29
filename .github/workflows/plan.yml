@@ -26,7 +26,7 @@ jobs:
         id: detect-folder
         run: |
           # Extraer los nombres de carpetas del último commit
-          FOLDER_NAME=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep '/' | awk -F'/' '{print $1}' | uniq)
+          FOLDER_NAME=$(git diff-tree --no-commit-id --name-only -r HEAD | grep '/' | awk -F'/' '{print $1}' | uniq)
           echo "Folder name: $FOLDER_NAME"
           echo "FOLDER_NAME=$FOLDER_NAME" >> $GITHUB_ENV
     
