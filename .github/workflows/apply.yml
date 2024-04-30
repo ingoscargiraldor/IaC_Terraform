@@ -15,7 +15,24 @@ jobs:
   terraform_apply:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Esto asegura que todo el historial esté disponible para la detección de cambios
+
+      - name: Detect changed folders
+        id: detect-folder
+        run: |
+          # Listar todos los directorios que han cambiado
+          FOLDERS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep '/' | awk -F'/' '{print $1}' | sort -u)
+          echo "Folders changed: $FOLDERS_CHANGED"
+          # Asumimos que solo nos interesa el primer directorio listado
+          FIRST_FOLDER=$(echo $FOLDERS_CHANGED | awk '{print $1}')
+          echo "FIRST_FOLDER=$FIRST_FOLDER" >> $GITHUB_ENV
+    
+      - name: Use the folder name
+        run: |
+          echo "Changes detected in folder: $FIRST_FOLDER"
 
       - name: Get PR ID
         id: pr-id
@@ -30,28 +47,18 @@ jobs:
 
       - name: Terraform Init
         id: init
-        working-directory: terraform/
+        working-directory: ${{ env.FIRST_FOLDER }}/
         run: |
           export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
           terraform init
 
       - name: List files in terraform directory
-        run: ls -la terraform/
-
-#      - name: List files in opt directory
-#        run: ls -la /opt/plantoexec/
-
-#      - name: Download Plan Artifact
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: ${{ steps.pr-id.outputs.PR_NUMBER }}-tf-plan
-#          path: /opt/plantoexec/tfplan
-
+        run: ls -la ${{ env.FIRST_FOLDER }}/
 
       - name: Terraform Plan
         id: plan
-        working-directory: terraform/
+        working-directory: ${{ env.FIRST_FOLDER }}/
         run: |
           touch tfplan
           terraform plan -lock=false -input=false -out=tfplan
@@ -59,6 +66,6 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        working-directory: terraform/
+        working-directory: ${{ env.FIRST_FOLDER }}/
         run: |
           terraform apply -no-color tfplan
