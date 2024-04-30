@@ -13,7 +13,10 @@ jobs:
   terraform_plan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Esto asegura que todo el historial esté disponible para la detección de cambios
 
       - name: Get PR ID
         id: pr-id
@@ -22,18 +25,19 @@ jobs:
           PR_NUMBER=${{ github.event.number }}
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
 
-      - name: Detect changed folder
+      - name: Detect changed folders
         id: detect-folder
         run: |
-          # Extraer los nombres de carpetas del último commit
-          FOLDER_NAME=$(git diff-tree --no-commit-id --name-only -r HEAD | grep '/' | awk -F'/' '{print $1}' | uniq)
-          echo "Folder name: $FOLDER_NAME"
-          echo "FOLDER_NAME=$FOLDER_NAME" >> $GITHUB_ENV
-    
+          # Listar todos los directorios que han cambiado
+          FOLDERS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep '/' | awk -F'/' '{print $1}' | sort -u)
+          echo "Folders changed: $FOLDERS_CHANGED"
+          # Asumimos que solo nos interesa el primer directorio listado
+          FIRST_FOLDER=$(echo $FOLDERS_CHANGED | awk '{print $1}')
+          echo "FIRST_FOLDER=$FIRST_FOLDER" >> $GITHUB_ENV
+  
       - name: Use the folder name
         run: |
-          echo "Changes detected in folder: $FOLDER_NAME"
-          # Aquí puedes ejecutar comandos o scripts dependiendo de la carpeta
+          echo "Changes detected in folder: $FIRST_FOLDER"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
