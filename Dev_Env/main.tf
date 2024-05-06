@@ -1,8 +1,7 @@
-resource "aws_instance" "example_server" {
-  ami           = "ami-04cb4ca688797756f"
-  instance_type = "t3.micro"
-
+resource "aws_s3_bucket" "my_bucket" {
+  bucket = "mi-bucket-unico-probe-2" # Nombre único para tu bucket
   tags = {
-    Name = "PruebaGitHubActions"
+    Name        = "Mi Bucket"
+    Environment = "Producción"
   }
 }
