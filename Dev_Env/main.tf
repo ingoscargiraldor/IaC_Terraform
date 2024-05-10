@@ -12,6 +12,5 @@ resource "aws_s3_bucket" "my_bucket_2" {
     Name        = "Mi Bucket"
     Environment = "Producción"
   }
-
 }
 
